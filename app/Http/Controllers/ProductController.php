@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Illuminate\Support\Facades\Redirect; 
 
 class ProductController extends Controller
 {
@@ -14,7 +16,8 @@ class ProductController extends Controller
      */
     public function index()
     {
-        //
+        $products = Product::all();
+        return Inertia::render('Mostrar', ['products'=>$products]);
     }
 
     /**
@@ -24,7 +27,7 @@ class ProductController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('FormCrear');
     }
 
     /**
@@ -35,7 +38,12 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'description'=>'required',
+            'price'=>'required'
+        ]);
+        Product::create($request->all());
+        return Redirect::route('products.index');
     }
 
     /**
@@ -57,7 +65,7 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
-        //
+        return Inertia::render('FormEditar', ['product' => $product]);
     }
 
     /**
@@ -69,7 +77,8 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
-        //
+        $product->update($request->all());
+        return Redirect::route('products.index');
     }
 
     /**
@@ -80,6 +89,7 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        //
+        $product->delete();
+        return Redirect::route('products.index')
     }
 }
